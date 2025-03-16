@@ -47,7 +47,7 @@ func main() {
 						log.SetReportCaller(true)
 						log.SetReportTimestamp(true)
 
-						log.Debug("Verbose logging enabled")
+						log.Debug("verbose logging enabled")
 					}
 					return nil
 				},
@@ -82,11 +82,18 @@ func main() {
 				Flags: []cli.Flag{
 					&cli.StringFlag{
 						Name:  "host",
+						Usage: "Host to listen on.",
 						Value: "",
 					},
 					&cli.StringFlag{
 						Name:  "port",
+						Usage: "Port to listen on.",
 						Value: "2567",
+					},
+					&cli.StringFlag{
+						Name:  "token",
+						Usage: "Token to use for authentication.",
+						Value: "",
 					},
 				},
 				Action: runDeamon,

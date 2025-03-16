@@ -30,7 +30,7 @@ func runDeamon(ctx context.Context, cmd *cli.Command) error {
 		return fCtx.Next()
 	})
 
-	dm := newDeamon()
+	dm := newDeamon(cmd.String("token"))
 
 	app.Get("/", func(fCtx fiber.Ctx) error {
 		return fCtx.SendString("OK")
@@ -69,11 +69,13 @@ func runDeamon(ctx context.Context, cmd *cli.Command) error {
 
 type deamon struct {
 	player Player
+	token  string
 }
 
-func newDeamon() *deamon {
+func newDeamon(token string) *deamon {
 	return &deamon{
 		player: NewAutoPlayer(NewPipeWire(), NewPulseAudio()),
+		token:  token,
 	}
 }
 
@@ -84,6 +86,10 @@ type playRequest struct {
 }
 
 func (d *deamon) play(fCtx fiber.Ctx) error {
+	if d.token != "" && string(fCtx.Request().Header.Peek(fiber.HeaderAuthorization)) != d.token {
+		return fCtx.SendStatus(fiber.StatusUnauthorized)
+	}
+
 	request := &playRequest{}
 	if err := fCtx.Bind().JSON(request); err != nil {
 		log.Warnf("invalid request: %s", err)
