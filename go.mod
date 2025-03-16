@@ -1,4 +1,4 @@
-module amusic
+module github.com/mymmrac/amusic
 
 go 1.24.1
 
